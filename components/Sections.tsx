@@ -72,9 +72,13 @@ export default function Sections() {
     const message = String(formData.get("message") || "");
 
     const prefill = encodeURIComponent(
-      `Hi BrightPath Academy,%0AName: ${name}%0APhone: ${phone}%0ACourse: ${course}%0AMessage: ${message}`,
+      `Hi BrightPath Academy,
+      Name: ${name}
+      Phone: ${phone}
+      Course: ${course}
+      Message: ${message}`,
     );
-    window.open(`https://wa.me/919876543210?text=${prefill}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/917508799005?text=${prefill}`, "_blank", "noopener,noreferrer");
     setToast(true);
     setTimeout(() => setToast(false), 2400);
     event.currentTarget.reset();

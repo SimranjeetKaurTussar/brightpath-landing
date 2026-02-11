@@ -23,7 +23,7 @@ export default function Home() {
       <Footer />
 
       <motion.a
-        href="https://wa.me/919876543210?text=Hi%20BrightPath%20Academy%2C%20I%20want%20to%20book%20a%20free%20demo%20class."
+        href="https://wa.me/917508799005?text=Hi%20BrightPath%20Academy%2C%20I%20want%20to%20book%20a%20free%20demo%20class."
         target="_blank"
         rel="noreferrer"
         initial={{ opacity: 0, y: 16 }}
