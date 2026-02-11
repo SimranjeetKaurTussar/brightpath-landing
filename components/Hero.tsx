@@ -69,7 +69,7 @@ export default function Hero() {
               Book Free Demo
             </motion.a>
             <motion.a
-              href="https://wa.me/917508799005"
+              href="https://wa.me/919876543210"
               target="_blank"
               rel="noreferrer"
               whileHover={reducedMotion ? undefined : { y: -2, scale: 1.02 }}
@@ -87,14 +87,14 @@ export default function Hero() {
           whileHover={reducedMotion ? undefined : "hover"}
           animate="rest"
           transition={{ delay: reducedMotion ? 0 : 0.6 }}
-          className="relative hidden h-[400px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-white/70 shadow-[0_20px_60px_rgba(2,8,23,0.15)] lg:block"
+          className="relative hidden h-[420px] overflow-hidden rounded-3xl border border-slate-200 bg-white/70 shadow-[0_20px_60px_rgba(2,8,23,0.15)] lg:block"
         >
           <motion.div
             animate={reducedMotion ? { y: 0 } : { y: [0, -8, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             className="h-full w-full"
           >
-            <Image src="/hero-placeholder.jpg" alt="BrightPath visual" fill className="object-contain" priority />
+            <Image src="/hero-placeholder.svg" alt="BrightPath visual" fill className="object-cover" priority />
           </motion.div>
         </motion.div>
       </div>

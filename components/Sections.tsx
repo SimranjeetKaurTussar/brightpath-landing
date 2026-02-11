@@ -1,5 +1,6 @@
 "use client";
 
+import GallerySection from "@/components/GallerySection";
 import MotionReveal from "@/components/ui/MotionReveal";
 import { container, hoverLift, item, stagger, transition } from "@/lib/motion";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
@@ -7,16 +8,22 @@ import Image from "next/image";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 const courses = [
-  { title: "IELTS", desc: "Targeted speaking, writing, and test strategy." },
-  { title: "Spoken English", desc: "Build confidence with practical communication drills." },
-  { title: "Tuition (Class 9-12)", desc: "Concept-first teaching with exam-focused guidance." },
-  { title: "Interview Prep", desc: "Presence, structure, and delivery for modern interviews." },
+  { title: "IELTS", desc: "Targeted speaking, writing, and test strategy.", tone: "Band-wise roadmap" },
+  { title: "Spoken English", desc: "Build confidence with practical communication drills.", tone: "Daily speaking labs" },
+  { title: "Tuition (Class 9-12)", desc: "Concept-first teaching with exam-focused guidance.", tone: "Board + school support" },
+  { title: "Interview Prep", desc: "Presence, structure, and delivery for modern interviews.", tone: "Mock HR + profile polish" },
 ];
 
 const achievements = [
   { label: "Students Trained", value: 500 },
   { label: "Workshops Conducted", value: 120 },
   { label: "Parent Satisfaction", value: 96 },
+];
+
+const achievers = [
+  { name: "Isha", result: "IELTS Overall 7.5", note: "Improved speaking confidence in 8 weeks.", image: "/achiever-1.svg" },
+  { name: "Gurman", result: "Class 12 Score Boost", note: "Weekly tests and mentorship created consistency.", image: "/achiever-2.svg" },
+  { name: "Tanvi", result: "Interview Ready", note: "From hesitation to clear structured answers.", image: "/achiever-3.svg" },
 ];
 
 const testimonials = [
@@ -34,6 +41,8 @@ const features = [
   "Performance tracking",
   "Interview and communication labs",
 ];
+
+const trustItems = ["Structured Curriculum", "Mentor-Led", "Parent Updates", "Outcome Tracking", "Premium Learning Studio"];
 
 function Counter({ to }: { to: number }) {
   const ref = useRef<HTMLParagraphElement>(null);
@@ -72,13 +81,9 @@ export default function Sections() {
     const message = String(formData.get("message") || "");
 
     const prefill = encodeURIComponent(
-      `Hi BrightPath Academy,
-      Name: ${name}
-      Phone: ${phone}
-      Course: ${course}
-      Message: ${message}`,
+      `Hi BrightPath Academy,%0AName: ${name}%0APhone: ${phone}%0ACourse: ${course}%0AMessage: ${message}`,
     );
-    window.open(`https://wa.me/917508799005?text=${prefill}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/919876543210?text=${prefill}`, "_blank", "noopener,noreferrer");
     setToast(true);
     setTimeout(() => setToast(false), 2400);
     event.currentTarget.reset();
@@ -86,6 +91,18 @@ export default function Sections() {
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-26 px-4 pb-24 sm:px-6 lg:px-8">
+      <MotionReveal>
+        <section className="card overflow-hidden border-teal-100/80 p-4 sm:p-5">
+          <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} className="grid grid-cols-2 gap-3 text-center sm:grid-cols-3 lg:grid-cols-5">
+            {trustItems.map((entry) => (
+              <motion.div key={entry} variants={item} className="rounded-xl border border-teal-100 bg-teal-50/60 px-3 py-3 text-xs font-medium tracking-[0.14em] text-teal-700 uppercase sm:text-sm">
+                {entry}
+              </motion.div>
+            ))}
+          </motion.div>
+        </section>
+      </MotionReveal>
+
       <MotionReveal>
         <section id="courses" className="space-y-7">
           <h2 className="font-display text-3xl text-slate-900 sm:text-4xl">Courses designed for measurable growth</h2>
@@ -100,10 +117,16 @@ export default function Sections() {
                 transition={transition}
                 className="card group relative overflow-hidden p-6"
               >
+                <div className="absolute right-4 top-4 rounded-full border border-teal-200 bg-teal-50 px-2 py-1 text-[10px] font-semibold tracking-[0.18em] text-teal-700 uppercase">
+                  {course.tone}
+                </div>
                 <Image src={`/course-${(idx % 4) + 1}.svg`} alt={course.title} width={44} height={44} className="mb-4" />
                 <h3 className="text-xl font-medium text-slate-900">{course.title}</h3>
                 <p className="mt-2 text-slate-600">{course.desc}</p>
-                <span className="mt-4 inline-block text-sm text-teal-700">Explore →</span>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="inline-block text-sm text-teal-700">Explore →</span>
+                  <span className="text-xs text-slate-400">Admissions Open</span>
+                </div>
               </motion.article>
             ))}
           </motion.div>
@@ -125,6 +148,28 @@ export default function Sections() {
       </MotionReveal>
 
       <MotionReveal>
+        <section id="achievers" className="space-y-7">
+          <h2 className="font-display text-3xl text-slate-900 sm:text-4xl">Achievers spotlight</h2>
+          <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} className="grid gap-4 lg:grid-cols-3">
+            {achievers.map((achiever) => (
+              <motion.article key={achiever.name} variants={item} whileHover={reducedMotion ? undefined : "hover"} initial="rest" animate="rest" className="card overflow-hidden">
+                <div className="relative h-44 w-full">
+                  <Image src={achiever.image} alt={achiever.name} fill className="object-cover" />
+                </div>
+                <div className="p-5">
+                  <p className="text-sm text-teal-700">{achiever.result}</p>
+                  <h3 className="mt-1 text-xl font-semibold text-slate-900">{achiever.name}</h3>
+                  <p className="mt-2 text-sm text-slate-600">{achiever.note}</p>
+                </div>
+              </motion.article>
+            ))}
+          </motion.div>
+        </section>
+      </MotionReveal>
+
+      <GallerySection />
+
+      <MotionReveal>
         <section id="testimonials" className="space-y-7">
           <h2 className="font-display text-3xl text-slate-900 sm:text-4xl">What students say</h2>
           <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} className="grid gap-4 md:grid-cols-2">
@@ -139,7 +184,7 @@ export default function Sections() {
       </MotionReveal>
 
       <MotionReveal>
-        <section className="space-y-7">
+        <section id="why-us" className="space-y-7">
           <h2 className="font-display text-3xl text-slate-900 sm:text-4xl">Why choose BrightPath</h2>
           <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
@@ -175,6 +220,10 @@ export default function Sections() {
         <section id="contact" className="card rounded-3xl p-6 sm:p-9">
           <h2 className="font-display text-3xl text-slate-900 sm:text-4xl">Let&apos;s plan your learning path</h2>
           <p className="mt-3 text-slate-600">Fill the details and we&apos;ll open WhatsApp with your message pre-filled.</p>
+          <div className="mt-4 flex flex-wrap gap-3 text-xs font-semibold tracking-[0.15em] text-teal-700 uppercase">
+            <a href="tel:+919876543210" className="rounded-full border border-teal-200 bg-teal-50 px-3 py-2">Call +91 98765 43210</a>
+            <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer" className="rounded-full border border-teal-200 bg-teal-50 px-3 py-2">WhatsApp Fast Response</a>
+          </div>
           <form onSubmit={onSubmit} className="mt-7 grid gap-4 md:grid-cols-2">
             <input name="name" required placeholder="Name" className="input" />
             <input name="phone" required placeholder="Phone" className="input" />
@@ -199,7 +248,7 @@ export default function Sections() {
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: 12, filter: "blur(4px)" }}
             transition={{ duration: reducedMotion ? 0.01 : 0.25 }}
-            className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full border border-teal-300 bg-teal-500 px-4 py-2 text-sm font-medium text-white"
+            className="fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-full border border-teal-300 bg-teal-500 px-4 py-2 text-sm font-medium text-white md:bottom-6"
           >
             Message ready on WhatsApp
           </motion.div>
