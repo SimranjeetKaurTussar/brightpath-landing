@@ -1,16 +1,13 @@
 @import "tailwindcss";
 
-:root {
-  color-scheme: dark;
-}
-
 html {
   scroll-behavior: smooth;
 }
 
 body {
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  background: #060909;
+  background: #f5f6f8;
+  color: #0f172a;
 }
 
 body::before {
@@ -18,9 +15,9 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.22;
+  opacity: 0.2;
   z-index: -1;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 0.6px, transparent 0.6px);
+  background-image: radial-gradient(rgba(15, 23, 42, 0.15) 0.6px, transparent 0.6px);
   background-size: 3px 3px;
 }
 
@@ -29,5 +26,9 @@ body::before {
 }
 
 .input {
-  @apply rounded-xl border border-white/15 bg-black/30 px-4 py-3 text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-emerald-200/60 focus:ring-2 focus:ring-emerald-300/20;
+  @apply rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20;
+}
+
+.card {
+  @apply rounded-2xl border border-slate-200 bg-white/85 backdrop-blur;
 }

@@ -2,33 +2,46 @@
 
 import React, { ElementType, ReactNode, createElement, useEffect, useMemo, useRef, useState } from "react";
 
-type AnyProps = Record<string, unknown> & { children?: ReactNode; className?: string; style?: React.CSSProperties };
-
-type MotionValue = {
-  get: () => number;
-  set: (next: number) => void;
+type AnyProps = Record<string, unknown> & {
+  children?: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
 };
 
-function useMergedStyle(initial: unknown, animate: unknown, transition: unknown) {
-  const merged = useMemo(() => {
-    const base = (typeof initial === "object" && initial ? initial : {}) as React.CSSProperties;
-    const end = (typeof animate === "object" && animate ? animate : {}) as React.CSSProperties;
-    const duration = typeof transition === "object" && transition && "duration" in transition
-      ? Number((transition as { duration?: number }).duration) * 1000
-      : 700;
-    return { base, end, duration };
-  }, [initial, animate, transition]);
+type VariantValue = Record<string, unknown>;
+type Variants = Record<string, VariantValue>;
 
-  const [style, setStyle] = useState<React.CSSProperties>(merged.base);
+function readVariant(input: unknown, keyOrObject: unknown): VariantValue {
+  if (typeof keyOrObject === "object" && keyOrObject) return keyOrObject as VariantValue;
+  if (typeof keyOrObject === "string" && input && typeof input === "object") {
+    const map = input as Variants;
+    return (map[keyOrObject] ?? {}) as VariantValue;
+  }
+  if (input && typeof input === "object") return input as VariantValue;
+  return {};
+}
 
-  useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      setStyle({ ...merged.end, transition: `all ${merged.duration}ms cubic-bezier(0.22,1,0.36,1)` });
-    });
-    return () => cancelAnimationFrame(id);
-  }, [merged]);
+function toStyle(variant: VariantValue) {
+  const style: React.CSSProperties = {};
+  if (variant.opacity !== undefined) style.opacity = Number(variant.opacity);
+
+  const transforms: string[] = [];
+  if (variant.y !== undefined) transforms.push(`translateY(${Number(variant.y)}px)`);
+  if (variant.x !== undefined) transforms.push(`translateX(${Number(variant.x)}px)`);
+  if (variant.scale !== undefined) transforms.push(`scale(${Number(variant.scale)})`);
+  if (transforms.length) style.transform = transforms.join(" ");
+
+  if (variant.filter !== undefined) style.filter = String(variant.filter);
+  if (variant.boxShadow !== undefined) style.boxShadow = String(variant.boxShadow);
 
   return style;
+}
+
+function durationFromTransition(transition: unknown) {
+  if (transition && typeof transition === "object" && "duration" in transition) {
+    return Number((transition as { duration?: number }).duration ?? 0.7) * 1000;
+  }
+  return 700;
 }
 
 function MotionFactory(tag: string | ElementType) {
@@ -37,44 +50,70 @@ function MotionFactory(tag: string | ElementType) {
       children,
       initial,
       animate,
+      exit,
+      variants,
       whileInView,
       whileHover,
       transition,
       viewport,
+      style,
       ...rest
     } = props;
 
     const ref = useRef<HTMLElement | null>(null);
-    const [visible, setVisible] = useState(!whileInView);
-    const style = useMergedStyle(initial, visible ? (whileInView || animate) : initial, transition);
+    const [inView, setInView] = useState(!whileInView);
+    const [hovered, setHovered] = useState(false);
 
     useEffect(() => {
       if (!whileInView || !ref.current) return;
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            setVisible(true);
+            setInView(true);
             if (viewport && typeof viewport === "object" && (viewport as { once?: boolean }).once) {
               observer.disconnect();
             }
+          } else if (!(viewport && typeof viewport === "object" && (viewport as { once?: boolean }).once)) {
+            setInView(false);
           }
         },
-        { threshold: 0.15 },
+        { threshold: Number((viewport && typeof viewport === "object" && (viewport as { amount?: number }).amount) ?? 0.2) },
       );
       observer.observe(ref.current);
       return () => observer.disconnect();
-    }, [whileInView, viewport]);
+    }, [viewport, whileInView]);
 
-    return createElement(tag, {
-      ...rest,
-      ref,
-      style: { ...(props.style as React.CSSProperties), ...style },
-      onMouseEnter: () => {
-        if (whileHover && typeof whileHover === "object") {
-          setVisible(true);
-        }
+    const current = useMemo(() => {
+      const initialV = readVariant(variants, initial);
+      const animateV = readVariant(variants, animate);
+      const inViewV = readVariant(variants, whileInView);
+      const hoverV = readVariant(variants, whileHover);
+
+      if (hovered && whileHover) return hoverV;
+      if (inView && whileInView) return inViewV;
+      if (animate) return animateV;
+      return initialV;
+    }, [animate, hovered, inView, initial, variants, whileHover, whileInView]);
+
+    const animationStyle = toStyle(current);
+
+    return createElement(
+      tag,
+      {
+        ...rest,
+        ref,
+        style: {
+          ...(style as React.CSSProperties),
+          ...animationStyle,
+          transition: `all ${durationFromTransition(transition)}ms cubic-bezier(0.22,1,0.36,1)`,
+          willChange: "transform, opacity, filter",
+        },
+        onMouseEnter: () => setHovered(true),
+        onMouseLeave: () => setHovered(false),
+        'data-exit': exit ? 'true' : undefined,
       },
-    }, children);
+      children,
+    );
   };
 }
 
@@ -112,23 +151,16 @@ export function useInView<T extends Element>(ref: React.RefObject<T | null>, opt
   return visible;
 }
 
-export function useMotionValue(initialValue: number): MotionValue {
-  const ref = useRef(initialValue);
-  return {
-    get: () => ref.current,
-    set: (next) => {
-      ref.current = next;
-    },
-  };
-}
+export function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
 
-export function useSpring<T>(value: T) {
-  return value;
-}
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduced(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
-export function useTransform<T, R>(value: T, transform: (latest: number) => R) {
-  if (typeof value === "object" && value && "get" in (value as { get?: unknown })) {
-    return transform(Number((value as unknown as MotionValue).get()));
-  }
-  return transform(Number(value));
+  return reduced;
 }

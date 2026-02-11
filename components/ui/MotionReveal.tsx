@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { blurIn } from "@/lib/motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ReactNode } from "react";
 
 type MotionRevealProps = {
@@ -10,13 +11,16 @@ type MotionRevealProps = {
 };
 
 export default function MotionReveal({ children, className, delay = 0 }: MotionRevealProps) {
+  const reducedMotion = useReducedMotion();
+
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 36, filter: "blur(8px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      variants={blurIn}
+      initial="hidden"
+      whileInView="show"
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.75, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: reducedMotion ? 0.01 : 0.75, delay: reducedMotion ? 0 : delay }}
     >
       {children}
     </motion.div>

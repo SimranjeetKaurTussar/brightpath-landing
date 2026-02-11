@@ -1,42 +1,47 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { fadeIn, hoverLift, item, transition } from "@/lib/motion";
 import { useState } from "react";
 
 const links = ["Courses", "Results", "Testimonials", "Location", "Contact"];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const reducedMotion = useReducedMotion();
 
   return (
     <motion.header
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2, duration: 0.7 }}
-      className="sticky top-0 z-50 border-b border-white/10 bg-black/35 backdrop-blur-xl"
+      variants={fadeIn}
+      initial="hidden"
+      animate="show"
+      transition={{ duration: reducedMotion ? 0.01 : 0.55 }}
+      className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/75 backdrop-blur-xl"
     >
       <nav className="mx-auto flex h-18 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="#top" className="font-display text-xl tracking-wide text-white">
+        <motion.a href="#top" variants={item} className="font-display text-xl tracking-wide text-slate-900">
           BrightPath
-        </a>
+        </motion.a>
 
-        <div className="hidden items-center gap-7 text-sm text-zinc-300 md:flex">
+        <div className="hidden items-center gap-7 text-sm text-slate-600 md:flex">
           {links.map((link) => (
-            <a key={link} href={`#${link.toLowerCase()}`} className="group relative">
+            <motion.a key={link} href={`#${link.toLowerCase()}`} className="group relative" whileHover={reducedMotion ? undefined : "hover"} variants={hoverLift} initial="rest" animate="rest">
               {link}
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-emerald-300 transition-all duration-300 group-hover:w-full" />
-            </a>
+              <span className="absolute -bottom-1 left-0 h-px w-0 bg-teal-500 transition-all duration-300 group-hover:w-full" />
+            </motion.a>
           ))}
-          <a
+          <motion.a
             href="#contact"
-            className="rounded-full border border-emerald-300/40 px-4 py-2 text-emerald-100 transition hover:bg-emerald-300/10"
+            whileHover={reducedMotion ? undefined : { y: -2, scale: 1.02 }}
+            transition={transition}
+            className="rounded-full border border-teal-300/80 px-4 py-2 text-teal-700 transition hover:bg-teal-50"
           >
             Book Demo
-          </a>
+          </motion.a>
         </div>
 
         <button
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 text-slate-900 md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -47,12 +52,13 @@ export default function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="border-t border-white/10 bg-[#0b0f0f]/95 px-5 py-4 md:hidden"
+            initial={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -10, filter: "blur(3px)" }}
+            transition={{ duration: reducedMotion ? 0.01 : 0.28 }}
+            className="border-t border-slate-200 bg-white/95 px-5 py-4 md:hidden"
           >
-            <div className="flex flex-col gap-4 text-zinc-200">
+            <div className="flex flex-col gap-4 text-slate-700">
               {links.map((link) => (
                 <a key={link} href={`#${link.toLowerCase()}`} onClick={() => setOpen(false)}>
                   {link}
