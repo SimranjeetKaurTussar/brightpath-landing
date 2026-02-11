@@ -1,20 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Brightpath",
-  description: "Brightpath",
+  title: "BrightPath Academy | Admissions Open in Mohali",
+  description:
+    "BrightPath Academy in Mohali helps students build clarity, confidence, and measurable results across IELTS, spoken English, tuition, and interview prep.",
 };
 
 export default function RootLayout({
@@ -24,11 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <body className="bg-[#060909] text-zinc-100 antialiased">{children}</body>
     </html>
   );
 }
