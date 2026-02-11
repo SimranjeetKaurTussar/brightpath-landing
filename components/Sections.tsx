@@ -72,7 +72,7 @@ export default function Sections() {
     const prefill = encodeURIComponent(
       `Hi BrightPath Academy,%0AName: ${name}%0APhone: ${phone}%0ACourse: ${course}%0AMessage: ${message}`,
     );
-    window.open(`https://wa.me/919876543210?text=${prefill}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/917508799005?text=${prefill}`, "_blank", "noopener,noreferrer");
     setToast(true);
     setTimeout(() => setToast(false), 2400);
     event.currentTarget.reset();

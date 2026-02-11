@@ -68,7 +68,7 @@ export default function Hero() {
               Book Free Demo
             </a>
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/917508799005"
               target="_blank"
               rel="noreferrer"
               className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-zinc-100 transition hover:border-emerald-200/60 hover:bg-white/5"

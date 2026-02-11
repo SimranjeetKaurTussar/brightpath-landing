@@ -27,7 +27,7 @@ export default function Home() {
       <Footer />
 
       <a
-        href="https://wa.me/919876543210?text=Hi%20BrightPath%20Academy%2C%20I%20want%20to%20book%20a%20free%20demo%20class."
+        href="https://wa.me/917508799005?text=Hi%20BrightPath%20Academy%2C%20I%20want%20to%20book%20a%20free%20demo%20class."
         target="_blank"
         rel="noreferrer"
         className="fixed bottom-4 right-4 z-50 inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-400/90 px-4 py-3 text-sm font-semibold text-[#052016] shadow-[0_12px_40px_rgba(16,185,129,0.35)] transition hover:scale-105 md:hidden"
